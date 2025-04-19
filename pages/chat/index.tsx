@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import service from '@/services/voiceChatService';
 import React from 'react';
 import useSWR from 'swr';

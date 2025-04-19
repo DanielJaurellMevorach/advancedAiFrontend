@@ -1,4 +1,6 @@
-import router, { useRouter } from 'next/router'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import router from 'next/router'
 import React, { useState } from 'react'
 import service from '@/services/voiceChatService';
 

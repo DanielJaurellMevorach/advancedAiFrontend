@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRouter } from 'next/router';
 import React, { useState, useRef, useEffect } from 'react';
 import service from '@/services/voiceChatService';
