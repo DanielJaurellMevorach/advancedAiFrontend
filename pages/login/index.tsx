@@ -45,7 +45,7 @@ const Login: React.FC = () => {
         <header className={stylesHeader.navbarHeader}>
         <div className={stylesHeader.headerLeft}>
           
-          <h1 className={stylesHeader.appTitleNavbar}>LinguaChat</h1>
+          <h1 className={stylesHeader.appTitleNavbar}>Linguo</h1>
         </div>
     
       </header>

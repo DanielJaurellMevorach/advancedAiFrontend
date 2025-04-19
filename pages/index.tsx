@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu, X, MessageSquare, BookOpen, Award, User, Settings, PanelLeftClose } from 'lucide-react';
 import styles from '../styles/Home.module.css';
 import Link from 'next/link';
 import CheckIfSignedIn from '@/components/checkIfSignedIn';
+import ConversationTopicsSection from '@/components/conversationTopics';
 
 const Home: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('French');
+  const [username, setUsername] = useState("");
   
   const languages = ['French', 'Spanish', 'Japanese', 'German', 'Italian'];
+  
+  // Safely access localStorage after component mounts (client-side only)
+  useEffect(() => {
+    setUsername(localStorage.getItem('username') || "");
+  }, []);
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -28,7 +35,7 @@ const Home: React.FC = () => {
           <button onClick={toggleMenu} className={styles.menuButton}>
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <h1 className={styles.appTitle}>LinguaChat</h1>
+          <h1 className={styles.appTitle}>Linguo</h1>
         </div>
         <div className={styles.levelBadge}>
           Level 3
@@ -40,7 +47,7 @@ const Home: React.FC = () => {
         <div className={styles.menuOverlay} onClick={toggleMenu}>
           <div className={styles.sideMenu} onClick={e => e.stopPropagation()}>
             <div className={styles.menuHeader}>
-              <h2 className={styles.menuTitle}>LinguaChat</h2>
+              <h2 className={styles.menuTitle}>Linguo</h2>
               <button onClick={toggleMenu} className={styles.sidebarCloseIcon}>
                 <PanelLeftClose size={22} className={styles.sidebarCloseIcon}/>
               </button>
@@ -102,7 +109,7 @@ const Home: React.FC = () => {
 
         {/* Welcome Section */}
         <div className={styles.welcomeCard}>
-          <h2 className={styles.welcomeTitle}>Bonjour Daniel!</h2>
+          <h2 className={styles.welcomeTitle}>Bonjour {username}!</h2>
           <p className={styles.welcomeText}>Continue ton aventure en français...</p>
           <button className={styles.practiceButton}>
             Practice Now
@@ -125,30 +132,7 @@ const Home: React.FC = () => {
         </div>
 
         {/* Topics Section */}
-        <h3 className={styles.sectionTitle}>Conversation Topics</h3>
-        <div className={styles.topicsList}>
-          <div className={styles.topicCard}>
-            <div>
-              <h4 className={styles.topicTitle}>At the Restaurant</h4>
-              <p className={styles.topicText}>Order food and drinks</p>
-            </div>
-            <span className={styles.topicArrow}>→</span>
-          </div>
-          <div className={styles.topicCard}>
-            <div>
-              <h4 className={styles.topicTitle}>Travel & Directions</h4>
-              <p className={styles.topicText}>Navigate a new city</p>
-            </div>
-            <span className={styles.topicArrow}>→</span>
-          </div>
-          <div className={styles.topicCard}>
-            <div>
-              <h4 className={styles.topicTitle}>Daily Routine</h4>
-              <p className={styles.topicText}>Talk about your day</p>
-            </div>
-            <span className={styles.topicArrow}>→</span>
-          </div>
-        </div>
+        <ConversationTopicsSection username={username} />
       </main>
 
       {/* Bottom Navigation */}
