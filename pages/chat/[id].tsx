@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRouter } from 'next/router';
 import React, { useState, useRef, useEffect } from 'react';
-import service from '@/services/voiceChatService';
+import service from '@/services/voiceChat.service';
 import useSWR from 'swr';
+import CheckIfSignedIn from '@/components/checkIfSignedIn';
 
 type Message = {
   sender: 'You' | 'Bot' | 'Error' | 'Correction';
@@ -150,6 +151,12 @@ const ItemPage: React.FC = () => {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+      
+      <CheckIfSignedIn
+      redirectTo="/login"
+      loadingComponent={<div></div>}
+    >
+      
       <h1 style={{ marginBottom: '20px' }}>Chat with ID {id}</h1>
       {isLoading && <p>Loading messages...</p>}
       {error && <p style={{ color: 'red' }}>Error loading messages.</p>}
@@ -179,6 +186,7 @@ const ItemPage: React.FC = () => {
           {recording ? 'Stop Recording' : 'Start Recording'}
         </button>
       </div>
+      </CheckIfSignedIn>
     </div>
   );
 };

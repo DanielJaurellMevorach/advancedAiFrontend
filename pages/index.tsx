@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Menu, X, MessageSquare, BookOpen, Award, User, Settings } from 'lucide-react';
+import { Menu, X, MessageSquare, BookOpen, Award, User, Settings, PanelLeftClose } from 'lucide-react';
 import styles from '../styles/Home.module.css';
+import Link from 'next/link';
+import CheckIfSignedIn from '@/components/checkIfSignedIn';
 
 const Home: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,7 +15,13 @@ const Home: React.FC = () => {
   };
 
   return (
+    <div className={styles.background}>
+
     <div className={styles.container}>
+      <CheckIfSignedIn
+      redirectTo="/login"
+      loadingComponent={<div></div>}
+    >
       {/* Top Navigation */}
       <header className={styles.header}>
         <div className={styles.headerLeft}>
@@ -33,41 +41,41 @@ const Home: React.FC = () => {
           <div className={styles.sideMenu} onClick={e => e.stopPropagation()}>
             <div className={styles.menuHeader}>
               <h2 className={styles.menuTitle}>LinguaChat</h2>
-              <button onClick={toggleMenu}>
-                <X size={20} />
+              <button onClick={toggleMenu} className={styles.sidebarCloseIcon}>
+                <PanelLeftClose size={22} className={styles.sidebarCloseIcon}/>
               </button>
             </div>
             <nav>
               <ul className={styles.menuList}>
                 <li>
-                  <a href="#" className={`${styles.menuItem} ${styles.menuItemActive}`}>
+                  <Link href="#" className={`${styles.menuItem} ${styles.menuItemActive}`}>
                     <BookOpen size={20} className={styles.menuIcon} />
                     Learn
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className={styles.menuItem}>
+                  <Link href="#" className={styles.menuItem}>
                     <MessageSquare size={20} className={styles.menuIcon} />
                     Practice
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className={styles.menuItem}>
+                  <Link href="#" className={styles.menuItem}>
                     <Award size={20} className={styles.menuIcon} />
                     Progress
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className={styles.menuItem}>
+                  <Link href={"/login"} className={styles.menuItem}>
                     <User size={20} className={styles.menuIcon} />
                     Profile
-                  </a>
+                    </Link>
                 </li>
                 <li>
-                  <a href="#" className={styles.menuItem}>
+                  <Link href="#" className={styles.menuItem}>
                     <Settings size={20} className={styles.menuIcon} />
                     Settings
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </nav>
@@ -94,8 +102,8 @@ const Home: React.FC = () => {
 
         {/* Welcome Section */}
         <div className={styles.welcomeCard}>
-          <h2 className={styles.welcomeTitle}>Bonjour! Welcome back</h2>
-          <p className={styles.welcomeText}>username, Continue ton aventure en français...</p>
+          <h2 className={styles.welcomeTitle}>Bonjour Daniel!</h2>
+          <p className={styles.welcomeText}>Continue ton aventure en français...</p>
           <button className={styles.practiceButton}>
             Practice Now
           </button>
@@ -146,24 +154,26 @@ const Home: React.FC = () => {
       {/* Bottom Navigation */}
       <footer className={styles.footer}>
         <nav className={styles.bottomNav}>
-          <a href="#" className={`${styles.navItem} ${styles.navItemActive}`}>
+          <Link href="#" className={`${styles.navItem} ${styles.navItemActive}`}>
             <BookOpen size={20} />
             <span className={styles.navLabel}>Learn</span>
-          </a>
-          <a href="#" className={styles.navItem}>
+          </Link>
+          <Link href="#" className={styles.navItem}>
             <MessageSquare size={20} />
             <span className={styles.navLabel}>Practice</span>
-          </a>
-          <a href="#" className={styles.navItem}>
+          </Link>
+          <Link href="#" className={styles.navItem}>
             <Award size={20} />
             <span className={styles.navLabel}>Progress</span>
-          </a>
-          <a href="#" className={styles.navItem}>
+          </Link>
+          <Link href={"/login"} className={styles.navItem}>
             <User size={20} />
             <span className={styles.navLabel}>Profile</span>
-          </a>
+          </Link>
         </nav>
       </footer>
+    </CheckIfSignedIn>
+    </div>
     </div>
   );
 };

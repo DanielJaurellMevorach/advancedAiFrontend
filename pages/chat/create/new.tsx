@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import router from 'next/router'
 import React, { useState } from 'react'
-import service from '@/services/voiceChatService';
+import service from '../../../services/voiceChat.service';
+import CheckIfSignedIn from '@/components/checkIfSignedIn';
 
 
 const Form: React.FC = () => {
@@ -57,6 +58,12 @@ const Form: React.FC = () => {
   return (
     <div className="max-w-sm m-auto">
 
+
+      <CheckIfSignedIn
+      redirectTo="/login"
+      loadingComponent={<div></div>}
+    >
+
       <div>
         <h3 className="px-0">Create Voice Chat</h3>
       </div>
@@ -102,7 +109,8 @@ const Form: React.FC = () => {
         </div>
 
       </form>
-    </div>
+      </CheckIfSignedIn>
+      </div>
   )
 }
 

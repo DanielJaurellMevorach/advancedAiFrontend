@@ -1,21 +1,36 @@
 /* Home.module.css */
-
-body {
-    box-sizing: border-box;
-}
-
-body, html {
-    overflow-x: hidden;
-  }
   
+  .background{
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
 
-.container {
+  .container {
     display: flex;
     flex-direction: column;
     height: 100vh;
     width: 100%;
     background-color: #f8fafc;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.headerContainer {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.navbarHeader {
+    padding: 12px 16px;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
 }
 
 /* Header Styles */
@@ -41,6 +56,13 @@ body, html {
     cursor: pointer;
   }
   
+  .appTitleNavbar {
+    font-size: 30px;
+    font-weight: 700;
+    color: #059669;
+    margin: 0;
+  }
+
   .appTitle {
     font-size: 20px;
     font-weight: 700;
@@ -111,6 +133,16 @@ body, html {
   .menuIcon {
     margin-right: 12px;
     color: #059669;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .sidebarCloseIcon {
+    color: #059669;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
   }
   
   /* Main Content Styles */

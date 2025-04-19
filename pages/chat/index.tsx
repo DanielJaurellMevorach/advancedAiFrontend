@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import service from '@/services/voiceChatService';
+import service from '@/services/voiceChat.service';
 import React from 'react';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import CheckIfSignedIn from '@/components/checkIfSignedIn';
 
 const Page: React.FC = () => {
   const router = useRouter();
@@ -27,6 +28,10 @@ const Page: React.FC = () => {
 
   return (
     <div>
+      <CheckIfSignedIn
+      redirectTo="/login"
+      loadingComponent={<div></div>}
+    >
       <h1>Items List</h1>
       {isLoading && <p>Loading chats...</p>}
       {error && <p style={{ color: 'red' }}>Error loading chats.</p>}
@@ -69,6 +74,7 @@ const Page: React.FC = () => {
       <Link href="chat/create/new">
         create new chat
       </Link>
+      </CheckIfSignedIn>
     </div>
   );
 };
