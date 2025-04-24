@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRouter } from 'next/router';
 import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import { MessageSquare, Mic, MicOff, ArrowLeft } from 'lucide-react';
 import service from '@/services/voiceChat.service';
 import useSWR from 'swr';
 import CheckIfSignedIn from '@/components/checkIfSignedIn';
+import Header from '@/components/header';
 
 type Message = {
   sender: 'You' | 'Bot' | 'Error' | 'Correction';
@@ -11,20 +14,21 @@ type Message = {
   correct?: boolean;
 };
 
-const ItemPage: React.FC = () => {
+const ChatPage: React.FC = () => {
   const router = useRouter();
-  const id = router.query.id;
+  const id = router.query.id as string;
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const shouldFetch = typeof id === 'string';
 
   const { data, isLoading, error } = useSWR(
     shouldFetch ? ['fetcherMessages', id] : null,
-    () => service.getAllMessages(id! as string).then((res) => res.json())
+    () => service.getAllMessages(id).then((res) => res.json())
   );
 
   useEffect(() => {
@@ -54,55 +58,75 @@ const ItemPage: React.FC = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mediaRecorder = new MediaRecorder(stream);
-    audioChunksRef.current = [];
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      audioChunksRef.current = [];
 
-    mediaRecorder.ondataavailable = (event) => {
-      audioChunksRef.current.push(event.data);
-    };
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
 
-    mediaRecorder.onstop = async () => {
-      const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-      const formData = new FormData();
-      formData.append('audio', blob, 'recording.webm');
-      formData.append('chatId', id as string);
-      formData.append('username', 'admin'); // change later
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const formData = new FormData();
+        formData.append('audio', blob, 'recording.webm');
+        formData.append('chatId', id);
+        formData.append('username', 'admin'); // change later
 
-      try {
-        const response = await fetch('http://localhost:3000/voiceMessage/ask', {
-          method: 'POST',
-          body: formData,
-        });
+        // Add a temporary recording message
+        setMessages((prev) => [...prev, { sender: 'You', text: 'Processing your voice message...' }]);
 
-        const newData = await response.json();
-        const reply = newData.response;
+        try {
+          const response = await fetch('http://localhost:3000/voiceMessage/ask', {
+            method: 'POST',
+            body: formData,
+          });
 
-        if (reply.correction.descriptionOfAllMistakes === '') {
-          setMessages((prev) => [
-            ...prev,
-            { sender: 'You', text: reply.userSentence, correct: reply.correction.correctSentence },
-            { sender: 'Bot', text: reply.followupQuestion }
-          ]);
-        } else {
-          setMessages((prev) => [
-            ...prev,
-            { sender: 'You', text: reply.userSentence, correct: reply.correction.correctSentence },
-            { sender: 'Error', text: reply.correction.descriptionOfAllMistakes },
-            { sender: 'Correction', text: reply.correction.correctionOfEntireSentence },
-            { sender: 'Bot', text: reply.followupQuestion }
-          ]);
+          // Remove the temporary message
+          setMessages((prev) => prev.slice(0, -1));
+
+          const newData = await response.json();
+          const reply = newData.response;
+
+          if (reply.correction.descriptionOfAllMistakes === '') {
+            setMessages((prev) => [
+              ...prev,
+              { sender: 'You', text: reply.userSentence, correct: true },
+              { sender: 'Bot', text: reply.followupQuestion }
+            ]);
+          } else {
+            setMessages((prev) => [
+              ...prev,
+              { sender: 'You', text: reply.userSentence, correct: false },
+              { sender: 'Error', text: reply.correction.descriptionOfAllMistakes },
+              { sender: 'Correction', text: reply.correction.correctionOfEntireSentence },
+              { sender: 'Bot', text: reply.followupQuestion }
+            ]);
+          }
+        } catch (err) {
+          console.error('Error sending voice message:', err);
+          // Remove the temporary message and add an error
+          setMessages((prev) => [...prev.slice(0, -1), { sender: 'Bot', text: 'Failed to process your message. Please try again.' }]);
         }
-      } catch (err) {
-        console.error('Error sending voice message:', err);
-        setMessages((prev) => [...prev, { sender: 'Bot', text: 'Failed to get a reply.' }]);
-      }
-    };
+      };
 
-    mediaRecorder.start();
-    setRecording(true);
-    mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start();
+      setRecording(true);
+      mediaRecorderRef.current = mediaRecorder;
+    } catch (err) {
+      console.error('Error accessing microphone:', err);
+      setMessages((prev) => [...prev, { sender: 'Bot', text: 'Failed to access microphone. Please check your permissions and try again.' }]);
+    }
   };
 
   const stopRecording = () => {
@@ -112,83 +136,135 @@ const ItemPage: React.FC = () => {
     }
   };
 
-  const getBubbleStyle = (msg: Message): React.CSSProperties => {
-    const baseStyle: React.CSSProperties = {
-      padding: '8px 12px',
-      borderRadius: '10px',
-      marginBottom: '10px',
-      display: 'inline-block',
-      maxWidth: '80%',
-      color: '#000000',
-      backgroundColor: 'transparent',
-    };
-  
-    if (msg.sender === 'Error') {
-      return {
-        ...baseStyle,
-        backgroundColor: '#ffe4e6',
-        color: '#b91c1c',
-      };
-    }
-  
-    if (msg.sender === 'Correction') {
-      return {
-        ...baseStyle,
-        backgroundColor: '#ecfdf5',
-        color: 'green',
-      };
-    }
-  
-    if (msg.sender === 'You' && msg.correct === false) {
-      return {
-        ...baseStyle,
-        color: '#ef4444',
-      };
-    }
-  
-    return baseStyle;
-  };
-
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      
-      <CheckIfSignedIn
-      redirectTo="/login"
-      loadingComponent={<div></div>}
-    >
-      
-      <h1 style={{ marginBottom: '20px' }}>Chat with ID {id}</h1>
-      {isLoading && <p>Loading messages...</p>}
-      {error && <p style={{ color: 'red' }}>Error loading messages.</p>}
-      <div>
-        {messages.map((msg, index) => (
-          <div key={index} style={{ marginBottom: '15px' }}>
-            <strong>{msg.sender}:</strong>
-            <div style={getBubbleStyle(msg)}>
-              {msg.text}
-            </div>
-          </div>
-        ))}
-      </div>
-      <div style={{ marginTop: '30px' }}>
-        <button
-          onClick={recording ? stopRecording : startRecording}
-          style={{
-            padding: '10px 20px',
-            fontSize: '16px',
-            backgroundColor: recording ? '#ef4444' : '#10b981',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-          }}
+    <div className="overflow-x-hidden box-border">
+      <div className="flex flex-col h-screen w-full bg-slate-50 font-sans">
+        <CheckIfSignedIn
+          redirectTo="/login"
+          loadingComponent={<div></div>}
         >
-          {recording ? 'Stop Recording' : 'Start Recording'}
-        </button>
+          <Header />
+
+          {/* Main Content */}
+          <main className="flex-1 overflow-y-auto pb-24 w-full max-w-full box-border overflow-x-hidden relative">
+            {/* Back Button - Fixed at top */}
+            <div className="sticky top-0 bg-slate-50 z-10 p-4 border-b border-slate-100">
+              <Link href="/chat" className="flex items-center text-slate-600">
+                <ArrowLeft size={18} className="mr-1" />
+                <span>Back to Conversations</span>
+              </Link>
+            </div>
+
+            {/* Chat Messages */}
+            <div className="p-4">
+              {isLoading && (
+                <div className="flex justify-center items-center py-12">
+                  <div className="animate-pulse text-emerald-600">Loading conversation...</div>
+                </div>
+              )}
+
+              {error && (
+                <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6">
+                  Error loading messages. Please try refreshing the page.
+                </div>
+              )}
+
+              {!isLoading && messages.length === 0 && (
+                <div className="text-center py-12">
+                  <MessageSquare size={48} className="text-slate-300 mx-auto mb-4" />
+                  <p className="text-slate-500">No messages yet. Start recording to begin the conversation.</p>
+                </div>
+              )}
+
+              <div className="space-y-4">
+                {messages.map((msg, index) => {
+                  if (msg.sender === 'You') {
+                    return (
+                      <div key={index} className="flex justify-end">
+                        <div className={`rounded-lg px-4 py-2 max-w-xs md:max-w-md ${
+                          msg.correct === false 
+                            ? 'bg-red-50 text-red-700 border border-red-100' 
+                            : 'bg-emerald-600 text-white'
+                        }`}>
+                          {msg.text}
+                        </div>
+                      </div>
+                    );
+                  } else if (msg.sender === 'Bot') {
+                    return (
+                      <div key={index} className="flex justify-start">
+                        <div className="bg-white rounded-lg px-4 py-2 shadow-sm border border-slate-100 max-w-xs md:max-w-md">
+                          {msg.text}
+                        </div>
+                      </div>
+                    );
+                  } else if (msg.sender === 'Error') {
+                    return (
+                      <div key={index} className="flex justify-start">
+                        <div className="bg-red-50 text-red-700 rounded-lg px-4 py-2 border border-red-100 max-w-xs md:max-w-md">
+                          <strong>Errors:</strong> {msg.text}
+                        </div>
+                      </div>
+                    );
+                  } else if (msg.sender === 'Correction') {
+                    return (
+                      <div key={index} className="flex justify-start">
+                        <div className="bg-emerald-50 text-emerald-700 rounded-lg px-4 py-2 border border-emerald-100 max-w-xs md:max-w-md">
+                          <strong>Correct form:</strong> {msg.text}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
+                <div ref={messagesEndRef} />
+              </div>
+            </div>
+
+            {/* Recording Button - Fixed at bottom */}
+            <div className="fixed bottom-20 inset-x-0 p-4 bg-gradient-to-t from-slate-50 to-transparent flex justify-center">
+              <button
+                onClick={recording ? stopRecording : startRecording}
+                className={`flex items-center justify-center w-16 h-16 rounded-full shadow-lg transition-colors ${
+                  recording 
+                    ? 'bg-red-500 hover:bg-red-600' 
+                    : 'bg-emerald-600 hover:bg-emerald-700'
+                }`}
+              >
+                {recording ? (
+                  <MicOff size={24} className="text-white" />
+                ) : (
+                  <Mic size={24} className="text-white" />
+                )}
+              </button>
+            </div>
+          </main>
+
+          {/* Bottom Navigation */}
+          <footer className="bg-white shadow-sm border-t border-slate-100 w-full fixed bottom-0 left-0 right-0">
+            <nav className="flex justify-around">
+              <Link href="/" className="flex flex-col items-center py-3 px-6 text-slate-400">
+                <MessageSquare size={20} />
+                <span className="text-xs mt-1 font-medium">Home</span>
+              </Link>
+              <Link href="/chat" className="flex flex-col items-center py-3 px-6 text-emerald-600">
+                <MessageSquare size={20} />
+                <span className="text-xs mt-1 font-medium">Chats</span>
+              </Link>
+              <Link href="/flashcards" className="flex flex-col items-center py-3 px-6 text-slate-400">
+                <MessageSquare size={20} />
+                <span className="text-xs mt-1 font-medium">Flashcards</span>
+              </Link>
+              <Link href="/login" className="flex flex-col items-center py-3 px-6 text-slate-400">
+                <MessageSquare size={20} />
+                <span className="text-xs mt-1 font-medium">Profile</span>
+              </Link>
+            </nav>
+          </footer>
+        </CheckIfSignedIn>
       </div>
-      </CheckIfSignedIn>
     </div>
   );
 };
 
-export default ItemPage;
+export default ChatPage;

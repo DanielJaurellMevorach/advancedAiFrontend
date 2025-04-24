@@ -24,9 +24,10 @@ const Login: React.FC = () => {
        
     try {
       const userDataArray = await userService.signIn(username, password);
-      const {username: usernameResponse, token} = await userDataArray.json();
+      const {username: usernameResponse, token, id} = await userDataArray.json();
       localStorage.setItem('token', token);
       localStorage.setItem('username', usernameResponse);
+      localStorage.setItem('userId', id);
       router.push('/');
     } catch (err) {
       setError('Invalid username or password');
@@ -100,7 +101,7 @@ const Login: React.FC = () => {
             
             <div className="mt-6 text-sm text-slate-500 text-center">
               Don't have an account?{' '}
-              <Link href="/signup" className="text-emerald-600 font-medium">
+              <Link href="/register" className="text-emerald-600 font-medium">
                 Sign up
               </Link>
             </div>

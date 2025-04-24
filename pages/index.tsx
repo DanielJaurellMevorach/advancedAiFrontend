@@ -57,14 +57,18 @@ const Home: React.FC = () => {
             <h3 className="font-bold text-lg m-0 mb-3 text-slate-800">Quick Start</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5 w-full">
               <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100">
+                <Link href={"/chat"}>
                 <MessageSquare size={24} className="text-emerald-600 mb-2" />
                 <h4 className="font-bold text-slate-800 m-0 mb-1">Conversation</h4>
                 <p className="text-sm text-slate-500 m-0">Practice speaking with AI</p>
+              </Link>
               </div>
               <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100">
                 <BookOpen size={24} className="text-emerald-600 mb-2" />
+                <Link href={"/flashcards"}>
                 <h4 className="font-bold text-slate-800 m-0 mb-1">Flashcards</h4>
                 <p className="text-sm text-slate-500 m-0">Review vocabulary</p>
+                </Link>
               </div>
             </div>
 
@@ -75,17 +79,17 @@ const Home: React.FC = () => {
           {/* Bottom Navigation */}
           <footer className="bg-white shadow-sm border-t border-slate-100 w-full">
             <nav className="flex justify-around">
-              <Link href="#" className="flex flex-col items-center py-3 px-6 text-emerald-600">
+              <Link href="/" className="flex flex-col items-center py-3 px-6 text-emerald-600">
                 <BookOpen size={20} />
                 <span className="text-xs mt-1 font-medium">Learn</span>
               </Link>
               <Link href="#" className="flex flex-col items-center py-3 px-6 text-slate-400">
-                <MessageSquare size={20} />
+                <BookOpen size={20} />
                 <span className="text-xs mt-1 font-medium">Practice</span>
               </Link>
-              <Link href="#" className="flex flex-col items-center py-3 px-6 text-slate-400">
-                <Award size={20} />
-                <span className="text-xs mt-1 font-medium">Progress</span>
+              <Link href="/flashcards" className="flex flex-col items-center py-3 px-6 text-slate-400">
+                <BookOpen size={20} />
+                <span className="text-xs mt-1 font-medium">Flashcards</span>
               </Link>
               <Link href="/login" className="flex flex-col items-center py-3 px-6 text-slate-400">
                 <User size={20} />

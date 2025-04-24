@@ -37,21 +37,21 @@ const Header: React.FC = () => {
                         <nav>
                           <ul className="list-none p-0 m-0">
                             <li>
-                              <Link href="#" className="flex items-center text-slate-700 font-medium p-2 rounded-lg mb-4 bg-slate-100">
+                              <Link href="/" className="flex items-center text-slate-700 font-medium p-2 rounded-lg mb-4 bg-slate-100">
                                 <BookOpen size={20} className="mr-3 text-emerald-600" />
                                 Learn
                               </Link>
                             </li>
                             <li>
-                              <Link href="#" className="flex items-center text-slate-700 font-medium p-2 rounded-lg mb-4">
+                              <Link href="/practice" className="flex items-center text-slate-700 font-medium p-2 rounded-lg mb-4">
                                 <MessageSquare size={20} className="mr-3 text-emerald-600" />
                                 Practice
                               </Link>
                             </li>
                             <li>
-                              <Link href="#" className="flex items-center text-slate-700 font-medium p-2 rounded-lg mb-4">
-                                <Award size={20} className="mr-3 text-emerald-600" />
-                                Progress
+                              <Link href="/flashcards" className="flex items-center text-slate-700 font-medium p-2 rounded-lg mb-4">
+                                <BookOpen size={20} className="mr-3 text-emerald-600" />
+                                Flashcards
                               </Link>
                             </li>
                             <li>

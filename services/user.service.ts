@@ -48,9 +48,37 @@ const getUserChats = async (username: string) => {
   return response;
 };
 
+type RegisterUser = {
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+};
+
+const registerUser = async (user: RegisterUser) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/user/register`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to register user");
+  }
+
+  return response;
+};
+
 const userService = {
   signIn,
   getUserChats,
+  registerUser,
 };
 
 export default userService;
