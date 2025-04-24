@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Menu, X, MessageSquare, BookOpen, Award, User, Settings, PanelLeftClose } from 'lucide-react';
-import styles from '../styles/Home.module.css';
+import { MessageSquare, BookOpen, Award, User} from 'lucide-react';
 import Link from 'next/link';
 import CheckIfSignedIn from '@/components/checkIfSignedIn';
 import ConversationTopicsSection from '@/components/conversationTopics';
+import Header from '@/components/header';
 
 const Home: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('French');
   const [username, setUsername] = useState("");
   
@@ -16,148 +15,86 @@ const Home: React.FC = () => {
   useEffect(() => {
     setUsername(localStorage.getItem('username') || "");
   }, []);
-  
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
 
   return (
-    <div className={styles.background}>
+    <div className="overflow-x-hidden box-border">
+      <div className="flex flex-col h-screen w-full bg-slate-50 font-sans">
+        <CheckIfSignedIn
+          redirectTo="/login"
+          loadingComponent={<div></div>}
+        >
+          <Header/>
 
-    <div className={styles.container}>
-      <CheckIfSignedIn
-      redirectTo="/login"
-      loadingComponent={<div></div>}
-    >
-      {/* Top Navigation */}
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <button onClick={toggleMenu} className={styles.menuButton}>
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-          <h1 className={styles.appTitle}>Linguo</h1>
-        </div>
-        <div className={styles.levelBadge}>
-          Level 3
-        </div>
-      </header>
+          {/* Main Content */}
+          <main className="flex-1 overflow-y-auto p-4 w-full max-w-full box-border overflow-x-hidden">
+            {/* Language Selector */}
+            <div className="flex mb-6 overflow-x-auto w-full scrollbar-none pb-2">
+              {languages.map(language => (
+                <button
+                  key={language}
+                  className={`mr-3 px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium ${
+                    selectedLanguage === language 
+                      ? 'bg-emerald-600 text-white border-none' 
+                      : 'bg-white border border-slate-200 text-slate-700'
+                  } cursor-pointer`}
+                  onClick={() => setSelectedLanguage(language)}
+                >
+                  {language}
+                </button>
+              ))}
+            </div>
 
-      {/* Side Menu (mobile overlay) */}
-      {isMenuOpen && (
-        <div className={styles.menuOverlay} onClick={toggleMenu}>
-          <div className={styles.sideMenu} onClick={e => e.stopPropagation()}>
-            <div className={styles.menuHeader}>
-              <h2 className={styles.menuTitle}>Linguo</h2>
-              <button onClick={toggleMenu} className={styles.sidebarCloseIcon}>
-                <PanelLeftClose size={22} className={styles.sidebarCloseIcon}/>
+            {/* Welcome Section */}
+            <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl p-4 mb-5 text-white shadow-md w-full box-border">
+              <h2 className="font-bold text-xl m-0 mb-1">Bonjour {username}!</h2>
+              <p className="m-0 mb-4">Continue ton aventure en français...</p>
+              <button className="bg-white text-emerald-600 px-4 py-2 rounded-lg font-medium border-none shadow shadow-black/10 cursor-pointer">
+                Practice Now
               </button>
             </div>
-            <nav>
-              <ul className={styles.menuList}>
-                <li>
-                  <Link href="#" className={`${styles.menuItem} ${styles.menuItemActive}`}>
-                    <BookOpen size={20} className={styles.menuIcon} />
-                    Learn
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className={styles.menuItem}>
-                    <MessageSquare size={20} className={styles.menuIcon} />
-                    Practice
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className={styles.menuItem}>
-                    <Award size={20} className={styles.menuIcon} />
-                    Progress
-                  </Link>
-                </li>
-                <li>
-                  <Link href={"/login"} className={styles.menuItem}>
-                    <User size={20} className={styles.menuIcon} />
-                    Profile
-                    </Link>
-                </li>
-                <li>
-                  <Link href="#" className={styles.menuItem}>
-                    <Settings size={20} className={styles.menuIcon} />
-                    Settings
-                  </Link>
-                </li>
-              </ul>
+
+            {/* Quick Actions */}
+            <h3 className="font-bold text-lg m-0 mb-3 text-slate-800">Quick Start</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5 w-full">
+              <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100">
+                <MessageSquare size={24} className="text-emerald-600 mb-2" />
+                <h4 className="font-bold text-slate-800 m-0 mb-1">Conversation</h4>
+                <p className="text-sm text-slate-500 m-0">Practice speaking with AI</p>
+              </div>
+              <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100">
+                <BookOpen size={24} className="text-emerald-600 mb-2" />
+                <h4 className="font-bold text-slate-800 m-0 mb-1">Flashcards</h4>
+                <p className="text-sm text-slate-500 m-0">Review vocabulary</p>
+              </div>
+            </div>
+
+            {/* Topics Section */}
+            <ConversationTopicsSection username={username} />
+          </main>
+
+          {/* Bottom Navigation */}
+          <footer className="bg-white shadow-sm border-t border-slate-100 w-full">
+            <nav className="flex justify-around">
+              <Link href="#" className="flex flex-col items-center py-3 px-6 text-emerald-600">
+                <BookOpen size={20} />
+                <span className="text-xs mt-1 font-medium">Learn</span>
+              </Link>
+              <Link href="#" className="flex flex-col items-center py-3 px-6 text-slate-400">
+                <MessageSquare size={20} />
+                <span className="text-xs mt-1 font-medium">Practice</span>
+              </Link>
+              <Link href="#" className="flex flex-col items-center py-3 px-6 text-slate-400">
+                <Award size={20} />
+                <span className="text-xs mt-1 font-medium">Progress</span>
+              </Link>
+              <Link href="/login" className="flex flex-col items-center py-3 px-6 text-slate-400">
+                <User size={20} />
+                <span className="text-xs mt-1 font-medium">Profile</span>
+              </Link>
             </nav>
-          </div>
-        </div>
-      )}
-
-      {/* Main Content */}
-      <main className={styles.mainContent}>
-        {/* Language Selector */}
-        <div className={styles.languageSelector}>
-          {languages.map(language => (
-            <button
-              key={language}
-              className={`${styles.languageButton} ${
-                selectedLanguage === language ? styles.languageButtonActive : ''
-              }`}
-              onClick={() => setSelectedLanguage(language)}
-            >
-              {language}
-            </button>
-          ))}
-        </div>
-
-        {/* Welcome Section */}
-        <div className={styles.welcomeCard}>
-          <h2 className={styles.welcomeTitle}>Bonjour {username}!</h2>
-          <p className={styles.welcomeText}>Continue ton aventure en français...</p>
-          <button className={styles.practiceButton}>
-            Practice Now
-          </button>
-        </div>
-
-        {/* Quick Actions */}
-        <h3 className={styles.sectionTitle}>Quick Start</h3>
-        <div className={styles.quickActionsGrid}>
-          <div className={styles.actionCard}>
-            <MessageSquare size={24} className={styles.actionIcon} />
-            <h4 className={styles.actionTitle}>Conversation</h4>
-            <p className={styles.actionText}>Practice speaking with AI</p>
-          </div>
-          <div className={styles.actionCard}>
-            <BookOpen size={24} className={styles.actionIcon} />
-            <h4 className={styles.actionTitle}>Flashcards</h4>
-            <p className={styles.actionText}>Review vocabulary</p>
-          </div>
-        </div>
-
-        {/* Topics Section */}
-        <ConversationTopicsSection username={username} />
-      </main>
-
-      {/* Bottom Navigation */}
-      <footer className={styles.footer}>
-        <nav className={styles.bottomNav}>
-          <Link href="#" className={`${styles.navItem} ${styles.navItemActive}`}>
-            <BookOpen size={20} />
-            <span className={styles.navLabel}>Learn</span>
-          </Link>
-          <Link href="#" className={styles.navItem}>
-            <MessageSquare size={20} />
-            <span className={styles.navLabel}>Practice</span>
-          </Link>
-          <Link href="#" className={styles.navItem}>
-            <Award size={20} />
-            <span className={styles.navLabel}>Progress</span>
-          </Link>
-          <Link href={"/login"} className={styles.navItem}>
-            <User size={20} />
-            <span className={styles.navLabel}>Profile</span>
-          </Link>
-        </nav>
-      </footer>
-    </CheckIfSignedIn>
-    </div>
+          </footer>
+        </CheckIfSignedIn>
+      </div>
     </div>
   );
 };
