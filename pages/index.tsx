@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MessageSquare, BookOpen, Award, User} from 'lucide-react';
+import { MessageSquare, BookOpen, Award, User, PencilLine} from 'lucide-react';
 import Link from 'next/link';
 import CheckIfSignedIn from '@/components/checkIfSignedIn';
 import ConversationTopicsSection from '@/components/conversationTopics';
@@ -55,7 +55,7 @@ const Home: React.FC = () => {
 
             {/* Quick Actions */}
             <h3 className="font-bold text-lg m-0 mb-3 text-slate-800">Quick Start</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5 w-full">
               <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100">
                 <Link href={"/chat"}>
                 <MessageSquare size={24} className="text-emerald-600 mb-2" />
@@ -69,6 +69,13 @@ const Home: React.FC = () => {
                 <h4 className="font-bold text-slate-800 m-0 mb-1">Flashcards</h4>
                 <p className="text-sm text-slate-500 m-0">Review vocabulary</p>
                 </Link>
+              </div>
+              <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100">
+                <Link href={"/evaluate"}>
+                <PencilLine size={24} className="text-emerald-600 mb-2" />
+                <h4 className="font-bold text-slate-800 m-0 mb-1">Evaluate</h4>
+                <p className="text-sm text-slate-500 m-0">Evaluate your text based on the CEFR level</p>
+              </Link>
               </div>
             </div>
 
