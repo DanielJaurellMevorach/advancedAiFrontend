@@ -15,6 +15,8 @@ const CreateChatForm: React.FC = () => {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [statusType, setStatusType] = useState<'success' | 'error' | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [language, setLanguage] = useState('English');
+
 
   const clearErrors = () => {
     setNameError(null);
@@ -34,22 +36,24 @@ const CreateChatForm: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     clearErrors();
-    
+
+    console.log(language)
+
     if (!validate()) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
-      const response = await service.createVoiceChat(name);
-      
+      const response = await service.createVoiceChat(name, language);
+
       if (response.status === 200) {
         const result = await response.json();
         setStatusType('success');
         setStatusMessage('Conversation successfully created');
         setName('');
-        
+
         setTimeout(() => {
           router.push('/chat');
         }, 2000);
@@ -94,11 +98,10 @@ const CreateChatForm: React.FC = () => {
 
             {/* Status Messages */}
             {statusMessage && (
-              <div className={`p-4 mb-6 rounded-lg ${
-                statusType === 'success' 
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-                  : 'bg-red-50 text-red-700 border border-red-200'
-              }`}>
+              <div className={`p-4 mb-6 rounded-lg ${statusType === 'success'
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                : 'bg-red-50 text-red-700 border border-red-200'
+                }`}>
                 {statusMessage}
               </div>
             )}
@@ -107,8 +110,8 @@ const CreateChatForm: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-slate-100 max-w-md mx-auto">
               <form onSubmit={handleSubmit}>
                 <div className="mb-6">
-                  <label 
-                    htmlFor="chatName" 
+                  <label
+                    htmlFor="chatName"
                     className="block mb-2 text-sm font-medium text-slate-700"
                   >
                     Conversation Name
@@ -119,23 +122,37 @@ const CreateChatForm: React.FC = () => {
                     value={name}
                     onChange={(event) => setName(event.target.value)}
                     placeholder="Enter a name for your conversation"
-                    className={`w-full p-3 rounded-lg border ${
-                      nameError ? 'border-red-300 bg-red-50' : 'border-slate-200'
-                    } focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors`}
+                    className={`w-full p-3 rounded-lg border ${nameError ? 'border-red-300 bg-red-50' : 'border-slate-200'
+                      } focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors`}
                   />
                   {nameError && (
                     <div className="mt-2 text-sm text-red-600">{nameError}</div>
                   )}
                 </div>
 
+                <div className="mb-6">
+                  <label className="block mb-2 text-sm font-medium text-slate-700">
+                    Select Language
+                  </label>
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    disabled={isSubmitting}
+                    className={`w-full bg-white text-slate-700 py-3 px-4 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-colors ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-slate-100'}`}
+                  >
+                    <option value="English">English</option>
+                    <option value="French">French</option>
+                    <option value="Dutch">Dutch</option>
+                  </select>
+                </div>
+
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full bg-emerald-600 text-white py-3 px-4 rounded-lg font-medium text-center ${
-                    isSubmitting 
-                      ? 'opacity-70 cursor-not-allowed' 
-                      : 'hover:bg-emerald-700 transition-colors'
-                  }`}
+                  className={`w-full bg-emerald-600 text-white py-3 px-4 rounded-lg font-medium text-center ${isSubmitting
+                    ? 'opacity-70 cursor-not-allowed'
+                    : 'hover:bg-emerald-700 transition-colors'
+                    }`}
                 >
                   {isSubmitting ? 'Creating...' : 'Create Conversation'}
                 </button>

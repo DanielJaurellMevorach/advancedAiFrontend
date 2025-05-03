@@ -24,7 +24,7 @@ const getAllMessages = async (id: string) => {
   return response;
 };
   
-const createVoiceChat = async (name: string) => {
+const createVoiceChat = async (name: string, language: string) => {
   // const token = JSON.parse(localStorage.getItem('loggedInUser') as string).token;
   return await fetch(
     process.env.NEXT_PUBLIC_API_URL + `/voiceChat/create`,
@@ -37,7 +37,9 @@ const createVoiceChat = async (name: string) => {
         },
         body: JSON.stringify({
           username: 'admin',
-          name: name
+          name,
+          language,
+
         })
 
   }
