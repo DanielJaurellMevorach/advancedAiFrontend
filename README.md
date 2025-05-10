@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
 ## Getting Started
 
-First, run the development server:
+### Dotenv
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Dotenv is a module to externalize configuration, for instance database connection details.
+To get this demo up and running, you'll need to create a **.env** file in you root project directory (on the same level as .gitignore). The contents should look like this:
+
+```properties
+NEXT_PUBLIC_API_URL = http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Starting the application
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Run the following commands in a terminal (project root folder) to get the application up and running.
 
-## Learn More
+Install all required node dependencies (it can take a few minutes):
 
-To learn more about Next.js, take a look at the following resources:
+```console
+$ npm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To start the Node.js server execute:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```console
+$ npm run dev
+```
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Once the application is started
+
+Go to http://localhost:8080/login
+
+Enter those credentials :
+
+username : admin
+password : admin
+
+Now you are redirected to the home page.
+
+You can go to **conversation** or **evaluate**
+
+
+## Conversation
+
+In the home page click on Conversation
+
+Once redirected you can create a new chat. Give it a name and select a language
+
+Once redirected to the "all chats" page click on the chat that you just created
+
+Click on the green circle to record a message. Once your message is recorded you can click on it again.
+
+After a few seconds you can see your message transcribed and the answer of the bot
+
+Try a correct sentence like : "I would like to talk about computers."
+
+Try a false sentence like : "Yesterday, I'm buying a computer."
+
+
+## Evaluate
+
+In the home page click on Evaluate
+
+Once redirected you write or paste a text in the box (the maximum amount character is 3000)
+
+Click on the "Verify" button
+
+You can see the score of the text
+
+If you want to try again click on "Verify another text"
