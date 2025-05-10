@@ -63,7 +63,7 @@ const Evaluate: React.FC = () => {
                         ) : (
                             <>
                                 <label htmlFor="longText" className="block text-slate-700 font-medium mb-2">
-                                    Paste or write your text below (up to ~3000 words):
+                                    Paste or write your text below (up to ~500 words):
                                 </label>
                                 <textarea
                                     id="longText"

@@ -9,7 +9,6 @@ const Home: React.FC = () => {
   const [selectedLanguage, setSelectedLanguage] = useState('French');
   const [username, setUsername] = useState("");
   
-  const languages = ['French', 'Spanish', 'Japanese', 'German', 'Italian'];
   
   // Safely access localStorage after component mounts (client-side only)
   useEffect(() => {
@@ -28,29 +27,12 @@ const Home: React.FC = () => {
           {/* Main Content */}
           <main className="flex-1 overflow-y-auto p-4 w-full max-w-full box-border overflow-x-hidden">
             {/* Language Selector */}
-            <div className="flex mb-6 overflow-x-auto w-full scrollbar-none pb-2">
-              {languages.map(language => (
-                <button
-                  key={language}
-                  className={`mr-3 px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium ${
-                    selectedLanguage === language 
-                      ? 'bg-emerald-600 text-white border-none' 
-                      : 'bg-white border border-slate-200 text-slate-700'
-                  } cursor-pointer`}
-                  onClick={() => setSelectedLanguage(language)}
-                >
-                  {language}
-                </button>
-              ))}
-            </div>
+
 
             {/* Welcome Section */}
             <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl p-4 mb-5 text-white shadow-md w-full box-border">
-              <h2 className="font-bold text-xl m-0 mb-1">Bonjour {username}!</h2>
-              <p className="m-0 mb-4">Continue ton aventure en français...</p>
-              <button className="bg-white text-emerald-600 px-4 py-2 rounded-lg font-medium border-none shadow shadow-black/10 cursor-pointer">
-                Practice Now
-              </button>
+              <h2 className="font-bold text-xl m-0 mb-1">Hello {username}!</h2>
+              
             </div>
 
             {/* Quick Actions */}
@@ -79,8 +61,7 @@ const Home: React.FC = () => {
               </div>
             </div>
 
-            {/* Topics Section */}
-            <ConversationTopicsSection username={username} />
+            
           </main>
 
           {/* Bottom Navigation */}
